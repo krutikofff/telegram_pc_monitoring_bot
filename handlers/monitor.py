@@ -1,10 +1,10 @@
 from aiogram import Router
-from aiogram.enums import ParseMode, parse_mode
 from aiogram.types import Message
 from aiogram.filters import Command
 from services.system_info import (
     get_cpu_status,
-    get_ram_status, get_disk_status
+    get_ram_status,
+    get_disk_status
 )
 from config import ADMIN_ID
 
@@ -15,6 +15,14 @@ async def status_handler(message: Message):
     cpu_text = get_cpu_status()
     ram_text = get_ram_status()
     disks = get_disk_status()
+
+    total_free, total_available = 0, 0
+    for disk in disks:
+        total_free += disk["free"]
+    for disk in disks:
+        total_available += disk["total"]
+    total_percent = round((total_free / total_available) * 100, 2)
+
 
     # check if the bot is yours
     if message.from_user.id != ADMIN_ID:
@@ -34,6 +42,7 @@ async def status_handler(message: Message):
         "<b>┏━━━━━━━━━┓\n"
         " ::: DISCS & MEMORY:::\n"
         "┗━━━━━━━━━┛</b>\n\n"
+        f"<b>💽 Total:</b> <code>{total_percent}%</code>  ({total_free} GB free / {total_available} GB total)\n\n"
     )
     for disk in disks:
         full_message += (
