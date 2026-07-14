@@ -33,7 +33,7 @@ project_root/
 │   └── monitor.py        # Core analytics processing (/status)
 │
 └── services/             # Core business logic
-└── system_info.py    # Hardcore psutil system data collection
+    └── system_info.py    # Hardcore psutil system data collection
 ```
 
 ---
