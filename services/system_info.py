@@ -37,3 +37,26 @@ def get_disk_status():
         except PermissionError:
             continue
     return disks_data
+
+def get_top_processes(limit):
+    process_list = []
+
+    for proc in psutil.process_iter(attrs=["name","memory_info"]):
+        try:
+            info = proc.info
+            name = info["name"]
+            memory_info = info["memory_info"]
+
+            if memory_info:
+                memory_mb = memory_info.rss / (1024**2)
+
+                process_list.append({
+                    "name": name,
+                    "memory": memory_mb
+                })
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            continue
+
+    sorted_list = sorted(process_list, key=lambda k: k["memory"], reverse=True)
+
+    return sorted_list[:limit]

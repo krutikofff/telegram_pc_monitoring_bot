@@ -1,10 +1,11 @@
 from aiogram import Router
 from aiogram.types import Message
-from aiogram.filters import Command
+from aiogram.filters import Command, CommandObject
 from services.system_info import (
     get_cpu_status,
     get_ram_status,
-    get_disk_status
+    get_disk_status,
+    get_top_processes
 )
 from config import ADMIN_ID
 
@@ -51,3 +52,31 @@ async def status_handler(message: Message):
         )
 
     await message.answer(full_message, parse_mode="HTML")
+
+@router.message(Command("top","processes"))
+async def top_handler(message: Message, command: CommandObject):
+
+    if message.from_user.id != ADMIN_ID:
+        return
+
+    limit = 5
+
+    try:
+        if command.args is not None:
+            limit = int(command.args)
+    except Exception:
+        await message.answer("❌ Please enter a valid number after the command (e.g., /top 10).")
+        return
+
+    process_list = get_top_processes(limit)
+
+    process_message = (
+        "<b>┏━━━━━━━━━━━━━━━┓\n"
+        f" ::: TOP {limit} RUNNING PROCESSES :::\n"
+        "┗━━━━━━━━━━━━━━━┛</b>\n\n"
+    )
+    for proc in process_list:
+        process_message += f"• <code>{proc['name']}</code> — <code>{proc['memory']:.2f} MB</code>\n"
+
+    await message.answer(process_message, parse_mode="HTML")
+
