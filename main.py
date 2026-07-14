@@ -5,7 +5,7 @@ from handlers.common import router as common_router
 from handlers.monitor import router as monitor_router
 from config import TOKEN, ADMIN_ID
 
-async def main(is_proxy_needed = None):
+async def main():
 
     while True:
         is_proxy_needed = input("Is proxy needed? (y/n): ").lower()
@@ -31,7 +31,7 @@ async def main(is_proxy_needed = None):
     dp.include_routers(common_router, monitor_router)
 
     while True:
-        notify_choice = input("Send message to admin? (y/n): ")
+        notify_choice = input("Send message to admin? (y/n): ").lower()
 
         if notify_choice == "n":
             print("🚀 Bot has started! Listening for messages...")
