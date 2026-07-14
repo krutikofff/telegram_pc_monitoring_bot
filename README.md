@@ -31,7 +31,8 @@ project_root/
 ├── handlers/             # Bot controllers (Routing & Input processing)
 │   ├── common.py         # Basic commands (/start)
 │   └── monitor.py        # Core analytics processing (/status)
-│└── services/             # Core business logic
+│
+└── services/             # Core business logic
 └── system_info.py    # Hardcore psutil system data collection
 ```
 
