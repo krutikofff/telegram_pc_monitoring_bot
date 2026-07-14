@@ -42,7 +42,7 @@ project_root/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com
+git clone https://github.com/krutikofff/telegram_pc_monitoring_bot
 cd telegram_pc_monitoring_bot
 ```
 
