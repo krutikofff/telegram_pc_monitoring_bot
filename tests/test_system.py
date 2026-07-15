@@ -73,11 +73,12 @@ class TestSystemInfo(unittest.IsolatedAsyncioTestCase):
 
 
     @patch("handlers.monitor.get_top_processes")
+    @patch("handlers.monitor.ADMIN_ID", 999)
     async def test_top_handler(self, mock_get_top):
         mock_get_top.return_value = [{"name": "test.exe", "memory": 150.0}]
 
         mock_message = AsyncMock()
-        mock_message.from_user.id = ADMIN_ID
+        mock_message.from_user.id = 999
         mock_message.answer = AsyncMock()
 
         mock_command = MagicMock(spec=CommandObject)
@@ -92,10 +93,10 @@ class TestSystemInfo(unittest.IsolatedAsyncioTestCase):
         self.assertIn("test.exe", sent_text)
         self.assertIn("150.00 MB", sent_text)
 
-
+    @patch("handlers.monitor.ADMIN_ID", 999)
     async def test_top_handler_invalid_arg(self):
         mock_message = AsyncMock()
-        mock_message.from_user.id = ADMIN_ID
+        mock_message.from_user.id = 999
         mock_message.answer = AsyncMock()
 
         mock_command = MagicMock(spec=CommandObject)
