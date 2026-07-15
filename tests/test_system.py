@@ -1,11 +1,13 @@
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, AsyncMock
+from aiogram.filters import CommandObject
+from handlers.monitor import top_handler
 from services.system_info import (
     get_cpu_status,
     get_ram_status,
     get_disk_status
 )
-class TestSystemInfo(unittest.TestCase):
+class TestSystemInfo(unittest.IsolatedAsyncioTestCase):
 
     @patch("services.system_info.psutil.cpu_percent")
     def test_cpu_status(self, mock_cpu):
@@ -68,6 +70,39 @@ class TestSystemInfo(unittest.TestCase):
         self.assertEqual(result[1]["percent"], 20.0)
         self.assertEqual(result[1]["free"], 400.0)
         self.assertEqual(result[1]["total"], 500.0)
+
+@patch("handlers.monitor.get_top_handler")
+async def test_top_handler(self, mock_get_top):
+    mock_get_top.return_value = [{"name": "text.exe", "memory": 150.0}]
+
+    mock_message = AsyncMock()
+    mock_message.from_user.id = 1414562778
+    mock_message.answer = AsyncMock()
+
+    mock_command = MagicMock(spec = CommandObject)
+    mock_command.args = "1"
+
+    await top_handler(mock_message, mock_command)
+
+    mock_message.answer.assert_called_once()
+
+    sent_text = mock_message.answer.call_args[0][0]
+
+    self.assertIn("test.exe", sent_text)
+    self.assertIn("150.00 MB", sent_text)
+
+async def test_top_handler_invalid_arg(self):
+    mock_message = AsyncMock()
+    mock_message.from_user.id = 1414562778
+    mock_message.answer = AsyncMock()
+
+    mock_command = MagicMock(spec = CommandObject)
+    mock_command.args = "notnumbers"
+
+    await top_handler(mock_message, mock_command)
+
+    sent_text = mock_message.answer.call_args[0][0]
+    self.assertIn("Please enter a valid number", sent_text)
 
 if __name__ == "__main__":
     unittest.main()
