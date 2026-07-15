@@ -35,14 +35,14 @@ async def status_handler(message: Message):
         return
 
     full_message = (
-        "<b>┏━━━━━━━━━━━━━┓\n"
+        "<b>┏━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
         " ::: PC HARDWARE MONITOR :::\n"
-        "┗━━━━━━━━━━━━━┛</b>\n\n"
+        "┗━━━━━━━━━━━━━━━━━━━━━━━━┛</b>\n\n"
         f"<b>📊 CPU usage:</b> <code>{cpu_text}</code>\n"
         f"<b>💾 RAM usage:</b> <code>{ram_text}</code>\n\n"
-        "<b>┏━━━━━━━━━┓\n"
+        "<b>┏━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
         " ::: DISCS & MEMORY:::\n"
-        "┗━━━━━━━━━┛</b>\n\n"
+        "┗━━━━━━━━━━━━━━━━━━━━━━━━┛</b>\n\n"
         f"<b>💽 Total:</b> <code>{total_percent}%</code>  ({total_free} GB free / {total_available} GB total)\n\n"
     )
     for disk in disks:
@@ -71,9 +71,9 @@ async def top_handler(message: Message, command: CommandObject):
     process_list = get_top_processes(limit)
 
     process_message = (
-        "<b>┏━━━━━━━━━━━━━━━┓\n"
+        "<b>┏━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
         f" ::: TOP {limit} RUNNING PROCESSES :::\n"
-        "┗━━━━━━━━━━━━━━━┛</b>\n\n"
+        "┗━━━━━━━━━━━━━━━━━━━━━━━━┛</b>\n\n"
     )
     for proc in process_list:
         process_message += f"• <code>{proc['name']}</code> — <code>{proc['memory']:.2f} MB</code>\n"

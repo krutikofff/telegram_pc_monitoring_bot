@@ -16,9 +16,9 @@ async def start_handler(message: Message):
 @router.message(Command("help","?"))
 async def help_handler(message: Message):
     help_message = (
-        "<b>┏━━━━━━━━━━━━┓\n"
+        "<b>┏━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
         " ::: COMMAND REFERENCE :::\n"
-        "┗━━━━━━━━━━━━┛</b>\n\n"
+        "┗━━━━━━━━━━━━━━━━━━━━━━━━┛</b>\n\n"
         "/start - starts the bot\n"
         "/status - shows current PC load\n"
         "/top or /processes + N - shows top N processes (if you didn't specify N then default quantity is 5).\n"

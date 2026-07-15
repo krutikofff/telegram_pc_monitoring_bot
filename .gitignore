@@ -1,2 +1,6 @@
 .venv/
 .env
+services/__init__.py
+handlers/__init__.py
+.idea/
+**/__pychache__/
