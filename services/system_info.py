@@ -7,11 +7,11 @@ def get_cpu_status():
 def get_ram_status():
     ram = psutil.virtual_memory()
 
-    used_gb = round(ram.used / 1024**3, 2)
-    total_gb = round(ram.total / 1024**3, 2)
+    used_gb = ram.used / 1024**3
+    total_gb = ram.total / 1024**3
     percent = ram.percent
 
-    return f"{percent}% ({used_gb} GB / {total_gb} GB)"
+    return f"{percent}% ({used_gb:.2f} GB / {total_gb:.2f} GB)"
 
 def get_disk_status():
     disks_data = []
