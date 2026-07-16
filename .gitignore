@@ -1,7 +1,5 @@
 .venv/
 .env
-services/__init__.py
-handlers/__init__.py
 .idea/
 **/__pycache__/
 __pycache__/
