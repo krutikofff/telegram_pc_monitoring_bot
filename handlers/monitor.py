@@ -1,6 +1,8 @@
 from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import Command, CommandObject
+from pip._internal.exceptions import CommandError
+
 from services.system_info import (
     get_cpu_status,
     get_ram_status,
@@ -57,6 +59,11 @@ async def status_handler(message: Message):
 async def top_handler(message: Message, command: CommandObject):
 
     if message.from_user.id != ADMIN_ID:
+        await message.answer(
+            f"Your Telegram ID does not coincide with the ID in config.py at your PC.\n"
+            f"Please change it to yours!\n"
+            f"Your Telegram ID is {message.from_user.id}"
+        )
         return
 
     limit = 5
@@ -64,7 +71,8 @@ async def top_handler(message: Message, command: CommandObject):
     try:
         if command.args is not None:
             limit = int(command.args)
-    except Exception:
+            if limit <= 0: raise ValueError("Limit must be greater than 0")
+    except (ValueError, TypeError):
         await message.answer("❌ Please enter a valid number after the command (e.g., /top 10).")
         return
 

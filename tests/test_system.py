@@ -107,5 +107,36 @@ class TestSystemInfo(unittest.IsolatedAsyncioTestCase):
         sent_text = mock_message.answer.call_args[0][0]
         self.assertIn("Please enter a valid number", sent_text)
 
+    @patch("handlers.monitor.ADMIN_ID", 999)
+    async def test_top_handler_access_denied(self):
+        mock_message = AsyncMock()
+        mock_message.from_user.id = 111 # not ADMIN_ID
+        mock_message.answer = AsyncMock()
+
+        mock_command = MagicMock(command=CommandObject)
+        mock_command.args = None
+
+        await top_handler(mock_message, mock_command)
+
+        mock_message.answer.assert_called_once()
+        sent_text = mock_message.answer.call_args[0][0]
+
+        self.assertIn("111", sent_text)
+        self.assertIn("does not coincide", sent_text)
+
+    @patch("handlers.monitor.ADMIN_ID", 999)
+    @patch("handlers.monitor.get_top_processes")
+    async def test_top_handler_default_count(self, mock_get_top):
+        mock_get_top.return_value = [{"name": f"proc{i}", "memory": 150.0} for i in range(5)]
+
+        mock_message = AsyncMock()
+        mock_message.from_user.id = 999
+        mock_command = MagicMock(spec=CommandObject)
+        mock_command.args = None # N - standart
+
+        await top_handler(mock_message, mock_command)
+
+        mock_get_top.assert_called_once_with(5) # Test if default value is 5
+
 if __name__ == "__main__":
     unittest.main()
