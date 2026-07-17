@@ -1,7 +1,6 @@
 from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import Command, CommandObject
-from pip._internal.exceptions import CommandError
 
 from services.system_info import (
     get_cpu_status,
@@ -71,7 +70,8 @@ async def top_handler(message: Message, command: CommandObject):
     try:
         if command.args is not None:
             limit = int(command.args)
-            if limit <= 0: raise ValueError("Limit must be greater than 0")
+            if limit <= 0:
+                raise ValueError("Limit must be greater than 0")
     except (ValueError, TypeError):
         await message.answer("❌ Please enter a valid number after the command (e.g., /top 10).")
         return

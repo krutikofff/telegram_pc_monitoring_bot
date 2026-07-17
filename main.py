@@ -24,7 +24,8 @@ async def main():
             bot = Bot(token=TOKEN)
             break
 
-        else: print("Error! You should enter either 'y' or 'n'.")
+        else:
+            print("Error! You should enter either 'y' or 'n'.")
 
     dp = Dispatcher()
 
@@ -43,7 +44,8 @@ async def main():
             except Exception as e:
                 print(f"Log: Could not send startup notification: {e}")
             break
-        else: print("Error! You should enter either 'y' or 'n'.")
+        else:
+            print("Error! You should enter either 'y' or 'n'.")
 
     await dp.start_polling(bot)
 

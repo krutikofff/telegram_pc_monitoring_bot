@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import patch, MagicMock, AsyncMock
 from aiogram.filters import CommandObject
 from handlers.monitor import top_handler
-from config import ADMIN_ID
 from services.system_info import (
     get_cpu_status,
     get_ram_status,
