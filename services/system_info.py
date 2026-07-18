@@ -4,6 +4,9 @@ def get_cpu_status():
     cpu_usage = psutil.cpu_percent(interval=1)
     return f"{cpu_usage}%"
 
+def get_cpu_status_raw():
+    return psutil.cpu_percent(interval=1)
+
 def get_ram_status():
     ram = psutil.virtual_memory()
 
@@ -12,6 +15,9 @@ def get_ram_status():
     percent = ram.percent
 
     return f"{percent}% ({used_gb:.2f} GB / {total_gb:.2f} GB)"
+
+def get_ram_status_raw():
+    return psutil.virtual_memory().percent
 
 def get_disk_status():
     disks_data = []

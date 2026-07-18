@@ -22,5 +22,8 @@ async def help_handler(message: Message):
         "/start - starts the bot\n"
         "/status - shows current PC load\n"
         "/top or /processes + N - shows top N processes (if you didn't specify N then default quantity is 5).\n"
+        "/alert_on - enables automatic load alerts\n"
+        "/alert_off - disables automatic load alerts\n"
+        "/alert_threshold + N - sets the CPU/RAM alert threshold to N% (e.g. /alert_threshold 80)\n"
     )
     await message.answer(help_message, parse_mode="HTML")

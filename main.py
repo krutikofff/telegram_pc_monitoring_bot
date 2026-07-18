@@ -3,6 +3,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.session.aiohttp import AiohttpSession # import for proxy
 from handlers.common import router as common_router
 from handlers.monitor import router as monitor_router
+from services.alert_monitor import alert_monitor_loop
 from config import TOKEN, ADMIN_ID
 
 async def main():
@@ -46,6 +47,8 @@ async def main():
             break
         else:
             print("Error! You should enter either 'y' or 'n'.")
+
+    asyncio.create_task(alert_monitor_loop(bot, ADMIN_ID))
 
     await dp.start_polling(bot)
 

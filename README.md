@@ -1,19 +1,20 @@
 # 💻 PC Hardware Monitoring Telegram Bot
 
-An asynchronous Python application built with **Aiogram 3** and **Psutil** that allows users to remotely monitor their computer's hardware metrics (CPU workload, RAM utilization, storage capacity, and active processes) via Telegram messages. 
-
-The project features a modular architecture, robust security layers, comprehensive unit testing, and an automated CI/CD pipeline.
+An asynchronous Python application built with **Aiogram 3** and **Psutil**.
+It allows users to remotely monitor their PC hardware metrics via Telegram messages.
 
 ---
 
 ## 🚀 Key Features
 
-* **Real-time Hardware Metrics**: Dynamically fetches CPU percent, virtual memory (RAM), and automatically aggregates statistics across all connected logical drives (SSD/HDD).
-* **Process Manager (`/top`)**: Features a custom process tracker. Users can pass an optional argument (e.g., `/top 10`) to view the most memory-consuming active processes with full `ValueError` validation.
-* **Interactive CLI Startup**: Prompts the user in the console upon boot to configure proxy connections dynamically and choose whether to send a startup notification message to the administrator.
-* **Resilient Connection**: Optimized for restricted network environments by leveraging explicit `AiohttpSession` routing via custom proxy inputs.
-* **Terminal UI Theme**: Clean, professional HTML-formatted output with custom pseudo-graphic layout frames for seamless readability.
-* **Advanced Security**: Restricts access strictly to the system administrator based on their unique Telegram ID. Unauthorized users are blocked with a localized alert.
+* **Real-time metrics** — dynamically reads your PC hardware status (CPU, RAM, disk usage).
+* **Get metrics anywhere** — since the bot runs through Telegram, you can check your PC status from anywhere.
+* **Process Manager (`/top`)** — a custom process tracker. Users can pass an optional argument (e.g. `/top 10`) to see the top N processes by memory usage.
+* **Load Alerts** — automatically sends a warning message to Telegram if CPU or RAM load goes above a set threshold. The threshold and the on/off state can both be changed directly from the bot.
+* **Customizable startup** — prompts the user in the console upon boot to configure connection settings.
+* **Embedded proxy** — since Telegram is banned in Russia, a proxy is required to connect people from the region.
+* **Terminal UI theme** — clean, readable output with custom formatting.
+* **Advanced security** — the bot only responds to commands from the admin's Telegram ID. Any other user is blocked and shown a warning message.
 
 ---
 
@@ -29,24 +30,25 @@ The project features a modular architecture, robust security layers, comprehensi
 project_root/
 │
 ├── .github/workflows/
-│   └── tests.yml         # Automated GitHub Actions testing pipeline
+│   └── tests.yml           # Automated GitHub Actions testing pipeline
 │
-├── handlers/             # Bot controllers (Routing & Input processing)
-│   ├── common.py         # Basic commands (/start, /help, /?)
-│   └── monitor.py        # Core analytics processing (/status, /top)
+├── handlers/                # Bot controllers (Routing & Input processing)
+│   ├── common.py            # Basic commands (/start, /help, /?)
+│   └── monitor.py           # Core analytics processing (/status, /top, /alert_on, /alert_off, /alert_threshold)
 │
-├── services/             # Core business logic
-│   └── system_info.py    # Hardcore psutil system data collection
+├── services/                 # Core business logic
+│   ├── system_info.py        # Hardcore psutil system data collection
+│   └── alert_monitor.py      # Background load-checking loop and alert logic
 │
-├── tests/                # Automated isolated test suite
-│   ├── __init__.py       
-│   └── test_system.py    # Mock-based unit tests for services & handlers
+├── tests/                    # Automated isolated test suite
+│   ├── __init__.py
+│   └── test_system.py        # Mock-based unit tests for services & handlers
 │
-├── .env                  # Local secret tokens (Ignored by Git)
-├── .gitignore            # Git exclusion rules
-├── config.py             # Resilient configuration loader with fallback defaults
-├── main.py               # Interactive CLI bootstrapper & entry point
-└── requirements.txt      # Project dependencies
+├── .env                       # Local secret tokens (Ignored by Git)
+├── .gitignore                 # Git exclusion rules
+├── config.py                  # Resilient configuration loader with fallback defaults
+├── main.py                    # Interactive CLI bootstrapper & entry point
+└── requirements.txt           # Project dependencies
 ```
 
 ---
@@ -58,7 +60,7 @@ The application includes an isolated unit testing module utilizing `unittest.moc
 ### Run Tests Locally
 To execute the test suite on your local machine, run:
 ```bash
-python -m unittest discover -s tests
+python -m unittest discover -s tests -v
 ```
 
 ### Automated CI/CD

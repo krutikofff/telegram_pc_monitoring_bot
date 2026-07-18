@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock, AsyncMock
 from aiogram.filters import CommandObject
 from handlers.monitor import top_handler
+from services.alert_monitor import build_alert_message
 from services.system_info import (
     get_cpu_status,
     get_ram_status,
@@ -136,6 +137,47 @@ class TestSystemInfo(unittest.IsolatedAsyncioTestCase):
         await top_handler(mock_message, mock_command)
 
         mock_get_top.assert_called_once_with(5) # Test if default value is 5
+
+class TestAlertMonitor(unittest.TestCase):
+
+    @patch("services.alert_monitor.config.RAM_THRESHOLD", 80)
+    @patch("services.alert_monitor.config.CPU_THRESHOLD", 80)
+    def test_build_alert_messages_cpu_over_threshold(self):
+        result = build_alert_message(cpu=90.0, ram=50.0)
+
+        self.assertEqual(len(result), 1)
+        self.assertIn("CPU", result[0])
+        self.assertIn("90.0", result[0])
+
+    @patch("services.alert_monitor.config.RAM_THRESHOLD", 80)
+    @patch("services.alert_monitor.config.CPU_THRESHOLD", 80)
+    def test_build_alert_messages_ram_over_threshold(self):
+        result = build_alert_message(cpu=50.0, ram=95.0)
+
+        self.assertEqual(len(result), 1)
+        self.assertIn("RAM", result[0])
+        self.assertIn("95.0", result[0])
+
+    @patch("services.alert_monitor.config.RAM_THRESHOLD", 80)
+    @patch("services.alert_monitor.config.CPU_THRESHOLD", 80)
+    def test_build_alert_messages_both_over_threshold(self):
+        result = build_alert_message(cpu=90.0, ram=95.0)
+
+        self.assertEqual(len(result), 2)
+
+    @patch("services.alert_monitor.config.RAM_THRESHOLD", 80)
+    @patch("services.alert_monitor.config.CPU_THRESHOLD", 80)
+    def test_build_alert_messages_under_threshold(self):
+        result = build_alert_message(cpu=30.0, ram=40.0)
+
+        self.assertEqual(result, [])
+
+    @patch("services.alert_monitor.config.CPU_THRESHOLD", 80)
+    def test_build_alert_messages_exact_threshold(self):
+        # Проверяем граничное значение: ровно на пороге тоже должно сработать (>=)
+        result = build_alert_message(cpu=80.0, ram=0.0)
+
+        self.assertEqual(len(result), 1)
 
 if __name__ == "__main__":
     unittest.main()

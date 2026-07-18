@@ -1,6 +1,7 @@
 from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import Command, CommandObject
+import config
 
 from services.system_info import (
     get_cpu_status,
@@ -25,6 +26,7 @@ async def status_handler(message: Message):
         total_available += disk["total"]
     total_percent = round((total_free / total_available) * 100, 2)
 
+    alert_state = "✅ ON" if config.ALERT_ENABLED else "🔕 OFF"
 
     # check if the bot is yours
     if message.from_user.id != ADMIN_ID:
@@ -39,6 +41,7 @@ async def status_handler(message: Message):
         "<b>┏━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
         " ::: PC HARDWARE MONITOR :::\n"
         "┗━━━━━━━━━━━━━━━━━━━━━━━━┛</b>\n\n"
+        f"Alerts: {alert_state} (threshold: {config.CPU_THRESHOLD}%)\n\n"
         f"<b>📊 CPU usage:</b> <code>{cpu_text}</code>\n"
         f"<b>💾 RAM usage:</b> <code>{ram_text}</code>\n\n"
         "<b>┏━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
@@ -51,6 +54,7 @@ async def status_handler(message: Message):
             f"<b>💽 Disk {disk["name"]}</b> <code>{disk["percent"]}%</code> "
             f" ({disk["free"]:.2f} GB free / {disk["total"]:.2f} GB total)\n"
         )
+
 
     await message.answer(full_message, parse_mode="HTML")
 
@@ -88,3 +92,35 @@ async def top_handler(message: Message, command: CommandObject):
 
     await message.answer(process_message, parse_mode="HTML")
 
+@router.message(Command("alert_on"))
+async def alert_on_handler(message: Message):
+    if message.from_user.id != ADMIN_ID:
+        return
+    config.ALERT_ENABLED = True
+    await message.answer("✅ Load alerts enabled.")
+
+
+@router.message(Command("alert_off"))
+async def alert_off_handler(message: Message):
+    if message.from_user.id != ADMIN_ID:
+        return
+    config.ALERT_ENABLED = False
+    await message.answer("🔕 Load alerts disabled.")
+
+
+@router.message(Command("alert_threshold"))
+async def alert_threshold_handler(message: Message, command: CommandObject):
+    if message.from_user.id != ADMIN_ID:
+        return
+
+    try:
+        value = int(command.args)
+        if not (0 < value <= 100):
+            raise ValueError
+    except (ValueError, TypeError):
+        await message.answer("❌ Please enter a valid number between 1 and 100 (e.g., /alert_threshold 80).")
+        return
+
+    config.CPU_THRESHOLD = value
+    config.RAM_THRESHOLD = value
+    await message.answer(f"✅ Alert threshold set to {value}%.")
