@@ -6,3 +6,4 @@ __pycache__/
 *.pyc
 handlers/__pycache__/
 services/__pycache__/
+monitoring.db

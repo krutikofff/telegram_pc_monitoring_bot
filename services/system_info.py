@@ -44,6 +44,18 @@ def get_disk_status():
             continue
     return disks_data
 
+def get_disk_summary_raw() -> tuple[float, float]:
+    total_free = 0.0
+    total_size = 0.0
+    for part in psutil.disk_partitions():
+        try:
+            usage = psutil.disk_usage(part.device)
+            total_free += usage.free
+            total_size += usage.total
+        except PermissionError:
+            continue
+    return total_free / (1024 ** 3), total_size / (1024 ** 3)
+
 def get_top_processes(limit):
     process_list = []
 

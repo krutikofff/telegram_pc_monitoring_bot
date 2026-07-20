@@ -25,5 +25,6 @@ async def help_handler(message: Message):
         "/alert_on - enables automatic load alerts\n"
         "/alert_off - disables automatic load alerts\n"
         "/alert_threshold + N - sets the CPU/RAM alert threshold to N% (e.g. /alert_threshold 80)\n"
+        "/forecast or /predict - predicts in how many days your disk will run out of space\n"
     )
     await message.answer(help_message, parse_mode="HTML")

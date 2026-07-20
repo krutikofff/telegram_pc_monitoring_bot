@@ -5,6 +5,8 @@ from handlers.common import router as common_router
 from handlers.monitor import router as monitor_router
 from services.alert_monitor import alert_monitor_loop
 from config import TOKEN, ADMIN_ID
+from services.database import init_db, reset_db, DB_PATH
+
 
 async def main():
 
@@ -31,6 +33,21 @@ async def main():
     dp = Dispatcher()
 
     dp.include_routers(common_router, monitor_router)
+
+    if DB_PATH.exists():
+        while True:
+            db_choice = input("An existing monitoring.db was found. Reset it? (y/n): ").strip().lower()
+            if db_choice == "y":
+                reset_db()
+                print("Log: Database has been reset.")
+                break
+            elif db_choice == "n":
+                print("Log: Keeping existing database.")
+                break
+            else:
+                print("Error! You should enter either 'y' or 'n'.")
+
+    init_db()
 
     while True:
         notify_choice = input("Send message to admin? (y/n): ").lower()

@@ -10,14 +10,23 @@ from services.system_info import (
     get_top_processes
 )
 from config import ADMIN_ID
+from services.database import get_recent_snapshots
+from services.analytics import forecast_disk_full, format_forecast_text
+
 
 router = Router()
+
+def get_disk_forecast_line() -> str:
+    snapshots = get_recent_snapshots(limit=500)
+    days_left = forecast_disk_full(snapshots)
+    return format_forecast_text(days_left)
 
 @router.message(Command("status"))
 async def status_handler(message: Message):
     cpu_text = get_cpu_status()
     ram_text = get_ram_status()
     disks = get_disk_status()
+    forecast = get_disk_forecast_line()
 
     total_free, total_available = 0, 0
     for disk in disks:
@@ -54,7 +63,7 @@ async def status_handler(message: Message):
             f"<b>💽 Disk {disk["name"]}</b> <code>{disk["percent"]}%</code> "
             f" ({disk["free"]:.2f} GB free / {disk["total"]:.2f} GB total)\n"
         )
-
+    full_message += forecast
 
     await message.answer(full_message, parse_mode="HTML")
 
@@ -124,3 +133,15 @@ async def alert_threshold_handler(message: Message, command: CommandObject):
     config.CPU_THRESHOLD = value
     config.RAM_THRESHOLD = value
     await message.answer(f"✅ Alert threshold set to {value}%.")
+
+@router.message(Command("forecast", "predict"))
+async def forecast_handler(message: Message):
+    if message.from_user.id != ADMIN_ID:
+        await message.answer(
+            f"Your Telegram ID does not coincide with the ID in config.py at your PC.\n"
+            f"Please change it to yours!\n"
+            f"Your Telegram ID is {message.from_user.id}"
+        )
+        return
+
+    await message.answer(get_disk_forecast_line())
