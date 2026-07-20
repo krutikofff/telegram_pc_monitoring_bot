@@ -3,5 +3,6 @@
 .idea/
 **/__pycache__/
 __pycache__/
+*.pyc
 handlers/__pycache__/
 services/__pycache__/
